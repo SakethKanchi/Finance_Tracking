@@ -1,4 +1,14 @@
 Date,Amount,Category,Description
-23-03-2023,250.0,Income,Test
-25-04-2023,145.0,Income,Test2
-26-05-2023,150,Expense,Test3
+23-03-2023,2500.00,Income,Monthly Salary
+25-04-2023,145.50,Income,Freelance Payment
+15-03-2023,850.00,Expense,Apartment Rent
+05-04-2023,127.35,Expense,Supermarket Groceries
+12-04-2023,45.00,Expense,Public Transport
+28-04-2023,300.00,Income,Consulting Work
+03-05-2023,89.99,Expense,Netflix Subscription
+18-05-2023,65.40,Expense,Electricity Bill
+22-05-2023,1500.00,Income,Client Project
+30-05-2023,420.00,Expense,Car Maintenance
+10-06-2023,75.30,Expense,Dinner with Friends
+15-06-2023,2500.00,Income,Monthly Salary
+20-06-2023,120.00,Expense,Internet Bill

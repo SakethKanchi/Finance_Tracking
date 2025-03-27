@@ -143,6 +143,46 @@ class CSVManager:
         except Exception as e:
             print(f"⚠️ Error generating monthly summary: {str(e)}")
             return pd.DataFrame()
+        
+    @classmethod
+    def plot_transactions(cls, df):
+        """Generate a line plot of income vs expenses over time"""
+        try:
+            plt.figure(figsize=(12, 6))
+            
+            # Prepare data
+            df = df.copy()
+            df.set_index("Date", inplace=True)
+            
+            # Resample and fill missing dates
+            all_dates = pd.date_range(df.index.min(), df.index.max(), freq='D')
+            
+            income = df[df["Category"] == "Income"].resample('D').sum(numeric_only=True)
+            income = income.reindex(all_dates, fill_value=0)
+            
+            expenses = df[df["Category"] == "Expense"].resample('D').sum(numeric_only=True)
+            expenses = expenses.reindex(all_dates, fill_value=0)
+
+            # Create plot
+            plt.plot(income.index, income["Amount"], label="Income", color="green", marker='o')
+            plt.plot(expenses.index, expenses["Amount"], label="Expenses", color="red", marker='o')
+            
+            # Formatting
+            plt.xlabel("Date", fontsize=12)
+            plt.ylabel("Amount ($)", fontsize=12)
+            plt.title("Income vs Expenses Over Time", fontsize=14)
+            plt.legend()
+            plt.grid(True, linestyle='--', alpha=0.7)
+            plt.xticks(rotation=45)
+            plt.tight_layout()
+            
+            # Show plot
+            print("🖨️ Generating plot... Close the plot window to continue")
+            plt.show()
+            
+        except Exception as e:
+            print(f"❌ Error generating plot: {str(e)}")
+            plt.close()  # Ensure figure is closed on error
 
 def clear_screen():
     # Clear the terminal screen
@@ -165,53 +205,48 @@ def add_transaction():
     if CSVManager.add_entry(date, amount, category, description):
         press_enter_to_continue()
 
-# def plot_transactions(df):
-#     df.set_index("Date", inplace = True)
-#     income_df = (
-#                 df[df["Category"] == "Income"]
-#                 .resample("D")
-#                 .sum()
-#                 .reindex(df.index,fill_value = 0)
-#     )
-#     expense_df = (
-#                 df[df["Category"] == "Expense"]
-#                 .resample("D")
-#                 .sum()
-#                 .reindex(df.index,fill_value = 0)
-#     )
-#     plt.figure(figsize=(10,5))
-#     plt.plot(income_df.index,income_df["Amount"], label="Income", color="g")
-#     plt.plot(expense_df.index,expense_df["Amount"], label="Expense",color="r")
-#     plt.xlabel("Date")
-#     plt.ylabel("Amount")
-#     plt.title("Income and Expenses")
-#     plt.legend()
-#     plt.grid(True)
-#     plt.show()
-
 def view_transactions():
-    # Handle transaction viewing flow
+    """Handle transaction viewing flow"""
     clear_screen()
     print("🔍 View Transactions\n")
     print("1. View all transactions")
     print("2. View by date range")
     print("3. Monthly summary")
+    print("4. Generate graphical report")
     choice = input("\nChoose an option: ")
+    
+    df = pd.DataFrame()
     
     if choice == "1":
         clear_screen()
-        CSVManager.get_transactions()
+        df = CSVManager.get_transactions()
     elif choice == "2":
         clear_screen()
         print("📅 Enter date range")
         start_date = get_date("Start date (dd-mm-yyyy): ")
         end_date = get_date("End date (dd-mm-yyyy): ")
-        CSVManager.get_transactions(start_date, end_date)
+        df = CSVManager.get_transactions(start_date, end_date)
     elif choice == "3":
         clear_screen()
         CSVManager.get_monthly_summary()
+    elif choice == "4":
+        clear_screen()
+        start_date = get_date("Start date (dd-mm-yyyy) or leave blank for all time: ", allow_default=True)
+        end_date = get_date("End date (dd-mm-yyyy) or leave blank for all time: ", allow_default=True)
+        df = CSVManager.get_transactions(
+            start_date if start_date else None,
+            end_date if end_date else None
+        )
+        if not df.empty:
+            CSVManager.plot_transactions(df)
     else:
-        print("⚠️ Invalid option")
+        print("❌ Invalid option")
+    
+    # Offer plot for non-empty DataFrames from options 1/2
+    if not df.empty and choice in ['1', '2']:
+        plot_choice = input("\nWould you like to generate a graphical report? (Y/N): ").upper()
+        if plot_choice == 'Y':
+            CSVManager.plot_transactions(df)
     
     press_enter_to_continue()
 
