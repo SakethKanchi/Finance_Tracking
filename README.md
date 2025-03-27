@@ -3,8 +3,11 @@
 A command-line application built with Python and Pandas for managing personal finances. Track income, expenses, and generate financial reports with ease.
 
 ![CLI Screenshot](./images/1.png)
+
 ![](./images/2.png)
+
 ![](./images/3.png)
+
 ![](./images/4.png)
 
 ## Features
@@ -30,10 +33,10 @@ A command-line application built with Python and Pandas for managing personal fi
 ## Installation
 
 1. **Clone the repository**:
-   ```bash 
-   git clone https://github.com/yourusername/finance-tracker.git 
-   cd finance-tracker
-   ```
+```bash 
+git clone https://github.com/yourusername/finance-tracker.git 
+cd finance-tracker
+```
 
 2. **Install Required Libraries**:
 ```
